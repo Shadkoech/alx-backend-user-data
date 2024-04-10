@@ -2,7 +2,8 @@
 
 ![User protection](image.png)
 
-This repository serves as a valuable resource for developers aiming to enhance their understanding and skills in securely handling personal data within backend applications.
+ALX Backend User Data is a comprehensive repository designed to provide developers with resources, tools, and guidance on securely handling personal data within backend applications. In an era where data privacy and security are paramount, this repository aims to equip developers with the knowledge and skills necessary to protect sensitive information and comply with data protection regulations
+
 
 Available directories:
 1. [0x00-personal_data](0x00-personal_data)
