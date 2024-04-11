@@ -3,9 +3,10 @@
 fields"""
 
 import re
+import os
 import logging
+import mysql.connector
 from typing import List
-
 
 PII_FIELDS = ("name", "email", "phone", "ssn", "password")
 
@@ -28,22 +29,6 @@ def filter_datum(fields: List[str], redaction: str,
     return message
 
 
-def get_logger() -> logging.Logger:
-    """Gets configured logger object for logging user data
-    Returns:
-        Logger: Logger obj configured to log user data """
-
-    logger = logging.getLogger('user_data')
-    logger.setLevel(logging.INFO)
-    logger.propagate = False
-
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(RedactingFormatter(list(PII_FIELDS)))
-    logger.addHandler(stream_handler)
-
-    return logger
-
-
 class RedactingFormatter(logging.Formatter):
     """ Redacting Formatter class
         """
@@ -62,6 +47,41 @@ class RedactingFormatter(logging.Formatter):
         msg = super(RedactingFormatter, self).format(record)
         txt = filter_datum(self.fields, self.REDACTION, msg, self.SEPARATOR)
         return txt
+
+
+def get_logger() -> logging.Logger:
+    """Gets configured logger object for logging user data
+    Returns:
+        Logger: Logger obj configured to log user data """
+
+    logger = logging.getLogger('user_data')
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(RedactingFormatter(list(PII_FIELDS)))
+    logger.addHandler(stream_handler)
+
+    return logger
+
+
+def get_db() -> mysql.connector.connection.MySQLConnection:
+    """Method obtaining database credentials from env variables
+    Returns:
+        Connector to MySQL database"""
+    db_username = os.getenv('PERSONAL_DATA_DB_USERNAME', 'root')
+    db_password = os.getenv('PERSONAL_DATA_DB_PASSWORD', '')
+    db_host = os.getenv('PERSONAL_DATA_DB_HOST', 'localhost')
+    db_name = os.getenv('PERSONAL_DATA_DB_NAME')
+
+    # Connect to the MySQL database
+    connector = mysql.connector.connect(
+        user=db_username,
+        password=db_password,
+        host=db_host,
+        database=db_name
+    )
+    return connector
 
 
 if __name__ == '__main__':
