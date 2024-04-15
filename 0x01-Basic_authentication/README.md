@@ -1,19 +1,42 @@
-# Basic Authentication API
+# Simple API
 
-![Basic Access Auth](image.png)
+Simple HTTP API for playing with `User` model.
 
-## Background Context
-This project is all about authentication process and implement Basic Authentication on a simple API. Authentication is a critical aspect of securing web applications, ensuring that only authorized users can access certain resources or perform specific actions. 
 
-Basic authentication is one of the simplest methods for implementing authentication in web applications. It involves sending a username and password encoded in Base64 format via the HTTP Authorization header. Despite its simplicity, basic authentication provides a basic level of security for protecting resources.
+## Files
 
-## Objective
-Albeit the fact that implementing a custom basic authentication system is discouraged; this project aims to deepen the understanding of authentication mechanism by guiding through the process of implementing Basic Authentication on a simple API. 
-By building the authentication mechanism from scratch, one understands how authentication works at a fundamental level. Through this hands-on approach, it is easy to grasp concepts such as encoding data in Base64, constructing HTTP headers, and validating user credentials.
+### `models/`
 
-## Learning goals
-- What authentication entails
-- Understanding of Base64 encoding
-- Encoding a string in Base64
-- Basic authentication principles
-- Sending the Authorization header
+- `base.py`: base of all models of the API - handle serialization to file
+- `user.py`: user model
+
+### `api/v1`
+
+- `app.py`: entry point of the API
+- `views/index.py`: basic endpoints of the API: `/status` and `/stats`
+- `views/users.py`: all users endpoints
+
+
+## Setup
+
+```
+$ pip3 install -r requirements.txt
+```
+
+
+## Run
+
+```
+$ API_HOST=0.0.0.0 API_PORT=5000 python3 -m api.v1.app
+```
+
+
+## Routes
+
+- `GET /api/v1/status`: returns the status of the API
+- `GET /api/v1/stats`: returns some stats of the API
+- `GET /api/v1/users`: returns the list of users
+- `GET /api/v1/users/:id`: returns an user based on the ID
+- `DELETE /api/v1/users/:id`: deletes an user based on the ID
+- `POST /api/v1/users`: creates a new user (JSON parameters: `email`, `password`, `last_name` (optional) and `first_name` (optional))
+- `PUT /api/v1/users/:id`: updates an user based on the ID (JSON parameters: `last_name` and `first_name`)
