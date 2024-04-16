@@ -12,10 +12,10 @@ class Auth:
         """Check if authentication is required for the given path"""
         if path is None or not excluded_paths:
             return True
-        for excluded_path in excluded_paths:
-            if excluded_path in {path, path + '/'}:
+        for ex_path in excluded_paths:
+            if ex_path.endswith('*') and path.startswith(ex_path[:-1]):
                 return False
-            elif excluded_path.endswith('*') and path.startswith(excluded_path[:-1]):
+            elif ex_path in {path, path + '/'}:
                 return False
         return True
 
