@@ -10,7 +10,14 @@ class Auth:
 
     def require_auth(self, path: str, excluded_paths: List[str]) -> bool:
         """Check if authentication is required for the given path"""
-        return False
+        if path is None or not excluded_paths:
+            return True
+        for ex in excluded_paths:
+            if ex.endswith('*') and path.startswith(ex[:-1]):
+                return False
+            elif ex in {path, path + '/'}:
+                return False
+        return True
 
     def authorization_header(self, request=None) -> str:
         """Get the authorization header from the request"""
