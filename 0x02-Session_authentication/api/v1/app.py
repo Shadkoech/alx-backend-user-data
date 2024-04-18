@@ -30,21 +30,21 @@ else:
 @app.before_request
 def request_filter() -> None:
     """Method that checks and filters each request"""
-    excluded_paths = ['/api/v1/status/',
-                      '/api/v1/unauthorized/',
-                      '/api/v1/forbidden/',
-                      '/api/v1/auth_session/login/']
     if auth:
-        if auth.require_auth(request.path, excluded_paths):
-            if auth.authorization_header(request) is None:
+        exclude_paths = [
+            '/api/v1/status/',
+            '/api/v1/unauthorized/',
+            '/api/v1/forbidden/',
+            '/api/v1/auth_session/login/'
+        ]
+        if auth.require_auth(request.path, exclude_paths):
+            user = auth.current_user(request)
+            if auth.authorization_header(request) is None and \
+                    auth.session_cookie(request) is None:
                 abort(401)
-            if auth.current_user(request) is None:
+            if user is None:
                 abort(403)
-    # This makes current_user available throughout the request lifecycle.
-    request.current_user = auth.current_user(request)
-
-    if auth.authorization_header(request) and auth.session_cookie(request):
-        abort(401)
+            request.current_user = user
 
 
 @app.errorhandler(404)
