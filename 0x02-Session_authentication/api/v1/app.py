@@ -32,7 +32,8 @@ def request_filter() -> None:
     """Method that checks and filters each request"""
     excluded_paths = ['/api/v1/status/',
                       '/api/v1/unauthorized/',
-                      '/api/v1/forbidden/']
+                      '/api/v1/forbidden/',
+                      '/api/v1/auth_session/login/']
     if auth:
         if auth.require_auth(request.path, excluded_paths):
             if auth.authorization_header(request) is None:
@@ -41,6 +42,9 @@ def request_filter() -> None:
                 abort(403)
     # This makes current_user available throughout the request lifecycle.
     request.current_user = auth.current_user(request)
+
+    if auth.authorization_header(request) and auth.session_cookie(request):
+        abort(401)
 
 
 @app.errorhandler(404)
