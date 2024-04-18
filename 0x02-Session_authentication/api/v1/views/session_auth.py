@@ -32,3 +32,16 @@ def login() -> Tuple[str, int]:
             resp.set_cookie(session_name, session_id)
             return resp
     return jsonify({"error": "wrong password"}), 401
+
+
+@app_views.route('aut_session/logout', methods=['DELETE'],
+                 strict_slashes=False)
+def logout():
+    """Handle user logout"""
+    # Destroy the session and check if successful
+    destroy = auth.destroy_session(request)
+    if destroy is False:
+        abort(404)
+
+    # Return an empty JSON dictionary with status code 200
+    return jsonify({}), 200
