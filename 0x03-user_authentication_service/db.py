@@ -6,6 +6,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.session import Session
 
+from sqlalchemy.exc import InvalidRequestError
+from sqlalchemy.orm.exc import NoResultFound
+
 from user import Base, User
 
 
@@ -48,3 +51,20 @@ class DB:
             self._session.rollback()
             new_user = None
         return new_user
+
+    def find_user_by(self, **kwargs) -> User:
+        """Method finding a user in db based on provided criteria
+        Args:
+            **kwargs: Arbitrary keyword args used to filter users table
+        Returns:
+            User: First user found matching the provided criteria"""
+        if not kwargs:
+            raise InvalidRequestError
+
+        # Query the users table based on the provided criteria
+        user = self._session.query(User).filter_by(**kwargs).first()
+        if user is None:
+            # If no user is found, raise NoResultFound
+            raise NoResultFound
+
+        return user
