@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Module that hashes a password"""
 
+import uuid
 import bcrypt
 from db import DB
 from user import User
@@ -19,6 +20,13 @@ def _hash_password(password: str) -> bytes:
     # Generate salted hash of passwd using bcrypt
     hashed_password = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
     return hashed_password
+
+
+def _generate_uuid():
+    """GGenerates new UUID and returns as a string rep
+    Returns:
+        str: string representation of new UUID"""
+    return str(uuid.uuid4())
 
 
 class Auth:
