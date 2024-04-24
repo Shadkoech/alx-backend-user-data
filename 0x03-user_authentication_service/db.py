@@ -14,6 +14,8 @@ from user import Base, User
 
 class DB:
     """DB class
+    self._session:
+        refers to SQLAlchemy session obj associated with database connection
     """
 
     def __init__(self) -> None:
@@ -68,3 +70,28 @@ class DB:
             raise NoResultFound
 
         return user
+
+    def update_user(self, user_id: int, **kwargs) -> None:
+        """Update user's  attributes based on provided args
+        Args:
+            user_id (int): The ID of the user to update
+            **kwargs: Arbitrary kwargs rep user attribute + their new values"""
+
+        # Locate the user to update
+        user = self.find_user_by(id=user_id)
+        if user is None:
+            return
+
+        # Update the user's attribute
+        for attr, value in kwargs.items():
+            if hasattr(User, attr):
+                setattr(user, attr, value)
+            else:
+                raise ValueError
+
+        # Commit changes to the database
+        try:
+            self._session.commit()
+        except InvalidRequestError:
+            self._session.rollback()
+            raise InvalidRequestError
