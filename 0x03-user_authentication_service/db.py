@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """DB module
 """
 from sqlalchemy import create_engine
@@ -15,7 +16,7 @@ class DB:
     def __init__(self) -> None:
         """Initialize a new DB instance
         """
-        self._engine = create_engine("sqlite:///a.db", echo=True)
+        self._engine = create_engine("sqlite:///a.db", echo=False)
         Base.metadata.drop_all(self._engine)
         Base.metadata.create_all(self._engine)
         self.__session = None
@@ -37,14 +38,13 @@ class DB:
         Returns:
             User: The newly added User object"""
 
-        new_user = User(email=email, hashed_password=hashed_password)
         try:
+            new_user = User(email=email, hashed_password=hashed_password)
             # Add the new_user object to the session
             self._session.add(new_user)
             self._session.commit()
-            return new_user
         except Exception:
             # Rollback the transaction in case of an error
             self._session.rollback()
             new_user = None
-            return None
+        return new_user
