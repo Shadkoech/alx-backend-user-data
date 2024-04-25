@@ -28,7 +28,7 @@ def users():
 
 
 @app.route('/sessions', methods=['POST'])
-def login():
+def login() -> str:
     """Endpoint to login user based on provided email & password
     Returns:
         JSON response with session ID, otherwise abort"""
@@ -50,20 +50,26 @@ def login():
 
 
 @app.route('/sessions', methods=['DELETE'])
-def logout():
+def logout() -> str:
     """Endpoint that destroys a session associated with a given
     session ID and consequently log out the user
     Returns:
         Redirect to GET / on success and 403 HTTP on error"""
-    
-    session_id = request.cookies.get("session_id")
-    user = AUTH.get_user_from_session_id(session_id)
 
+    session_id = request.cookies.get("session_id", None)
+    if session_id is None:
+        abort(403)
+
+    user = AUTH.get_user_from_session_id(session_id)
     if user is None:
         abort(403)
+
     AUTH.destroy_session(user.id)
     return redirect('/')
 
+
+@app.route('/profile', methods=['GET'])
+def profile() -> str:
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
