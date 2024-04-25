@@ -73,7 +73,7 @@ def profile() -> str:
     """Method to obtain user profile info based on session ID
     Returns:
         JSON: resp with user email otherwise 403 error msg"""
-    
+
     session_id = request.cookies.get('session_id')
     if session_id is None:
         abort(403)
@@ -83,6 +83,7 @@ def profile() -> str:
         return jsonify({"email": user.email})
     else:
         abort(403)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port="5000")
